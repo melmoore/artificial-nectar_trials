@@ -9,6 +9,7 @@ library(dplyr)
 library(ggplot2)
 
 
+
 #load data
 angr <- read_csv("data files/artificial-nectar_grwth-rate-data_raw.csv")
 View(angr)
@@ -42,4 +43,24 @@ angr <- angr %>% separate(strain_trt_rep_id, into = c("strain", "trt", "rep"), s
 angr$rep <- sub("^", "rep_", angr$rep)
 
 
+#rename columns to be lower case
+angr <- angr %>% rename(time = Time, temp_600 = Temp_600)
 
+
+#convert times to decimal time for better analysis and plotting-------------
+dec.time<-function(x) {
+  x<-as.character(x)
+  sapply(strsplit(x,":"),function(x){
+    x <- as.numeric(x)
+    y<-x[1]+x[2]/60
+    
+  })
+}
+
+
+angr$dec.time <- dec.time(angr$time)
+
+
+#save to csv file
+
+write.csv(angr, "artificial-nectar_grwth-rate-data_cl.csv", row.names = FALSE)
